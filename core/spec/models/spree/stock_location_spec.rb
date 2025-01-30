@@ -285,5 +285,26 @@ module Spree
         end
       end
     end
+    describe "metadata fields" do
+      subject { described_class.new }
+
+      it "responds to customer_metadata" do
+        expect(subject).to respond_to(:customer_metadata)
+      end
+
+      it "responds to admin_metadata" do
+        expect(subject).to respond_to(:admin_metadata)
+      end
+
+      it "can store data in customer_metadata" do
+        subject.customer_metadata = { "location_details" => "classified" }
+        expect(subject.customer_metadata["location_details"]).to eq("classified")
+      end
+
+      it "can store data in admin_metadata" do
+        subject.admin_metadata = { "exchange_details" => "classified" }
+        expect(subject.admin_metadata["exchange_details"]).to eq("classified")
+      end
+    end
   end
 end

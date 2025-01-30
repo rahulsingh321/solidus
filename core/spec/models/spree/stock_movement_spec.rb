@@ -59,4 +59,24 @@ RSpec.describe Spree::StockMovement, type: :model do
       end
     end
   end
+
+  describe "metadata fields" do
+    it "responds to customer_metadata" do
+      expect(subject).to respond_to(:customer_metadata)
+    end
+
+    it "responds to admin_metadata" do
+      expect(subject).to respond_to(:admin_metadata)
+    end
+
+    it "can store data in customer_metadata" do
+      subject.customer_metadata = { "movement_reason" => "restock" }
+      expect(subject.customer_metadata["movement_reason"]).to eq("restock")
+    end
+
+    it "can store data in admin_metadata" do
+      subject.admin_metadata = { "internal_note" => "Inventory verified" }
+      expect(subject.admin_metadata["internal_note"]).to eq("Inventory verified")
+    end
+  end
 end

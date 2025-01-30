@@ -209,6 +209,18 @@ module Spree
     #   @return [Integer] Orders to show per-page in the admin (default: +15+)
     preference :orders_per_page, :integer, default: 15
 
+    # @!attribute [rw] max_keys
+    #   @return [Integer] Maximum keys that can be allocated in customer and admin metadata column(default: +6+)
+    preference :max_keys, :integer, default: 6
+
+    # @!attribute [rw] max_key_length
+    #   @return [Integer] Maximum length that key can have in customer and admin metadata column(default: +16+)
+    preference :max_key_length, :integer, default: 16
+
+    # @!attribute [rw] max_value_length
+    #   @return [Integer] Maximum length that value can have in customer and admin metadata column(default: +256+)
+    preference :max_value_length, :integer, default: 256
+
     # @!attribute [rw] properties_per_page
     #   @return [Integer] Properties to show per-page in the admin (default: +15+)
     preference :properties_per_page, :integer, default: 15

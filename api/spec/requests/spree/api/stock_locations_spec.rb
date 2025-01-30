@@ -36,6 +36,13 @@ module Spree::Api
           expect(json_response['name']).to eq stock_location.name
         end
 
+        it "can see customer metadata" do
+          get spree.api_stock_location_path(stock_location)
+
+          expect(response).to be_successful
+          expect(json_response).to have_key('customer_metadata')
+        end
+
         it "cannot see inactive stock locations" do
           stock_location.update!(active: false)
           get spree.api_stock_location_path(stock_location)
@@ -127,6 +134,13 @@ module Spree::Api
           expect(response).to be_successful
           expect(json_response['name']).to eq stock_location.name
         end
+
+        it "can see admin metadata" do
+          get spree.api_stock_location_path(stock_location)
+          
+          expect(response).to be_successful
+          expect(json_response).to have_key('admin_metadata')
+        end
       end
 
       describe "#create" do
@@ -155,6 +169,21 @@ module Spree::Api
           put(spree.api_stock_location_path(stock_location), params:)
           expect(response.status).to eq(200)
           expect(json_response['name']).to eq 'South Pole'
+        end
+
+        it "can update a stock location and it's metadata" do
+          params = {
+            stock_location: {
+              name: "South Pole",
+              admin_metadata: { 'warehouse' => 'WH345' }
+            }
+          }
+
+          put(spree.api_stock_location_path(stock_location), params:)
+
+          expect(response.status).to eq(200)
+          expect(json_response['name']).to eq 'South Pole'
+          expect(json_response["admin_metadata"]).to eq({ 'warehouse' => 'WH345' })
         end
       end
 

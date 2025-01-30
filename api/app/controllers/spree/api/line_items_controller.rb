@@ -17,6 +17,7 @@ module Spree
             params[:line_item][:quantity] || 1,
             options: line_item_params[:options].to_h
           )
+          set_metadata(@line_item)
           respond_with(@line_item, status: 201, default_template: :show)
         rescue ActiveRecord::RecordInvalid => error
           invalid_resource!(error.record)
@@ -26,6 +27,7 @@ module Spree
       def update
         @line_item = find_line_item
         if @order.contents.update_cart(line_items_attributes)
+          set_metadata(@line_item)
           @line_item.reload
           respond_with(@line_item, default_template: :show)
         else
@@ -40,6 +42,14 @@ module Spree
       end
 
       private
+
+      def set_metadata(line_item)
+       line_item.update(customer_metadata: line_item_params[:customer_metadata])
+
+       if can?(:admin, Spree::LineItem)
+         line_item.update(admin_metadata: line_item_params[:admin_metadata])
+       end
+     end
 
       def load_order
         @order ||= Spree::Order.includes(:line_items).find_by!(number: order_id)

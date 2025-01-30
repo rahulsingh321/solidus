@@ -65,6 +65,14 @@ module Spree::Api
         expect(json_response['stock_item_id']).to eq stock_movement.stock_item_id
       end
 
+      it 'can view admin metadata' do
+        get spree.api_stock_location_stock_movement_path(stock_location, stock_movement)
+
+        expect(json_response).to have_attributes(attributes)
+        expect(json_response['stock_item_id']).to eq stock_movement.stock_item_id
+        expect(json_response).to have_key('admin_metadata')
+      end
+
       it 'can create a new stock movement' do
         params = {
           stock_movement: {
@@ -75,6 +83,21 @@ module Spree::Api
         post(spree.api_stock_location_stock_movements_path(stock_location), params:)
         expect(response.status).to eq(201)
         expect(json_response).to have_attributes(attributes)
+      end
+
+      it 'can create a new stock movement with admin metadata' do
+        params = {
+          stock_movement: {
+            stock_item_id: stock_item.to_param,
+            admin_metadata: { 'is_deadstock' => 'true' }
+          }
+        }
+
+        post(spree.api_stock_location_stock_movements_path(stock_location), params:)
+        
+        expect(response.status).to eq(201)
+        expect(json_response).to have_attributes(attributes)
+        expect(json_response["admin_metadata"]).to eq({ 'is_deadstock' => 'true' })
       end
     end
   end

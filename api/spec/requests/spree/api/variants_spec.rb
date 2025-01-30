@@ -216,6 +216,22 @@ module Spree::Api
                                                         :option_type_id])
       end
 
+      it "can see a single variant with customer metadata" do
+        subject
+
+        expect(json_response).to have_attributes(show_attributes)
+        expect(json_response["stock_items"]).to be_present
+
+        option_values = json_response["option_values"]
+
+        expect(json_response).to have_key('customer_metadata')
+        expect(json_response).not_to have_key('admin_metadata')
+        expect(option_values.first).to have_attributes([:name,
+                                                        :presentation,
+                                                        :option_type_name,
+                                                        :option_type_id])
+      end
+
       it "can see a single variant with images" do
         variant.images.create!(attachment: image("blank.jpg"))
 
@@ -311,6 +327,18 @@ module Spree::Api
         expect(json_response).to have_attributes(new_attributes)
         expect(response.status).to eq(201)
         expect(json_response["sku"]).to eq("12345")
+
+        expect(variant.product.variants.count).to eq(1)
+      end
+
+      it "can create a new variant with metadata" do
+        post spree.api_product_variants_path(product), params: { variant: { sku: "12345", customer_metadata: { 'type' => 'limited edition' }, admin_metadata: { 'in_demand' => 'true' } } }
+
+        expect(json_response).to have_attributes(new_attributes)
+        expect(response.status).to eq(201)
+        expect(json_response["sku"]).to eq("12345")
+        expect(json_response["admin_metadata"]).to eq({ 'in_demand' => 'true' })
+        expect(json_response["customer_metadata"]).to eq({ 'type' => 'limited edition' })
 
         expect(variant.product.variants.count).to eq(1)
       end
