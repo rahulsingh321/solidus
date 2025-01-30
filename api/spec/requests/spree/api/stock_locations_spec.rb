@@ -137,7 +137,7 @@ module Spree::Api
 
         it "can see admin metadata" do
           get spree.api_stock_location_path(stock_location)
-          
+
           expect(response).to be_successful
           expect(json_response).to have_key('admin_metadata')
         end

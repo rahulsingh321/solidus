@@ -94,7 +94,7 @@ module Spree::Api
         }
 
         post(spree.api_stock_location_stock_movements_path(stock_location), params:)
-        
+
         expect(response.status).to eq(201)
         expect(json_response).to have_attributes(attributes)
         expect(json_response["admin_metadata"]).to eq({ 'is_deadstock' => 'true' })

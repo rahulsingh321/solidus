@@ -214,7 +214,7 @@ module Spree::Api
 
       it "can update admin_metadata" do
         post spree.api_users_path, params: { user: { email: "existing@example.com", admin_metadata: { 'user_type' => 'regular' } } }
-        
+
         expect(json_response).to have_attributes(attributes)
         expect(response.status).to eq(201)
         expect(json_response["admin_metadata"]).to eq({ 'user_type' => 'regular' })

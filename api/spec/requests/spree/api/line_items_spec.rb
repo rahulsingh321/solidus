@@ -111,8 +111,7 @@ module Spree::Api
         params: {
           line_item: { variant_id: product.master.to_param,
                        quantity: 1,
-                       customer_metadata: { "Company" => "Sample Company" }
-                      }
+                       customer_metadata: { "Company" => "Sample Company" } }
         }
 
         expect(json_response['customer_metadata']).to eq({ "Company" => "Sample Company" })

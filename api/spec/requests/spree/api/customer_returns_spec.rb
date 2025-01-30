@@ -128,8 +128,7 @@ module Spree::Api
         put spree.api_order_customer_return_path(customer_return.order, customer_return.id),
         params: {
           order_id: customer_return.order.number,
-          customer_return: { stock_location_id: final_stock_location.id, admin_metadata: { 'order_number' => 'PN345678' }
-          }
+          customer_return: { stock_location_id: final_stock_location.id, admin_metadata: { 'order_number' => 'PN345678' } }
         }
 
         expect(response.status).to eq(200)

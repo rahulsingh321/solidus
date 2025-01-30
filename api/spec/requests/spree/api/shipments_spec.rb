@@ -102,7 +102,7 @@ module Spree::Api
         }
 
         put(spree.api_shipment_path(shipment), params:)
-        
+
         expect(response.status).to eq(200)
         expect(json_response['stock_location_name']).to eq(stock_location.name)
         expect(json_response["admin_metadata"]).to eq({ 'delivery_type' => 'express' })

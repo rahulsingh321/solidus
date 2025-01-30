@@ -2157,7 +2157,7 @@ RSpec.describe Spree::Order, type: :model do
     let(:oversized_key_metadata) { { "company_details_for_products" => 'This is made by demo company' } } #  Exceeds 16 characters
     let(:valid_key_metadata) { { "company_details" => 'This is made by demo company' } }
 
-    subject {  create(:order, user:, store:) }
+    subject { create(:order, user:, store:) }
 
     %w[customer_metadata admin_metadata].each do |metadata_type|
       describe metadata_type.to_s do

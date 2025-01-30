@@ -198,7 +198,7 @@ module Spree::Api
                   admin_metadata: { 'order_number' => 'PN345678' }
                 }
               }
-              
+
               expect(response.status).to eq(200)
               expect(json_response["admin_metadata"]).to eq({ 'order_number' => 'PN345678' })
             end

@@ -49,7 +49,7 @@ module Spree
        if can?(:admin, Spree::LineItem)
          line_item.update(admin_metadata: line_item_params[:admin_metadata])
        end
-     end
+      end
 
       def load_order
         @order ||= Spree::Order.includes(:line_items).find_by!(number: order_id)

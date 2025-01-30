@@ -1010,7 +1010,7 @@ module Spree::Api
 
         it "can view admin_metadata" do
           get spree.api_order_path(order)
-          
+
           expect(json_response).to have_key('admin_metadata')
         end
       end
