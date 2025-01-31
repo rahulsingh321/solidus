@@ -22,8 +22,8 @@ class AddMetadataToSpreeResources < ActiveRecord::Migration[7.2]
           add_column table_name, :customer_metadata, :jsonb, default: {}
           add_column table_name, :admin_metadata, :jsonb, default: {}
         else
-          add_column table_name, :customer_metadata, :json, default: {}
-          add_column table_name, :admin_metadata, :json, default: {}
+          add_column table_name, :customer_metadata, :json
+          add_column table_name, :admin_metadata, :json
         end
       end
     end
