@@ -15,9 +15,10 @@ module Spree
           @line_item = @order.contents.add(
             variant,
             params[:line_item][:quantity] || 1,
-            options: line_item_params[:options].to_h
+            options: line_item_params[:options].to_h,
+            **extract_metadata
           )
-          set_metadata(@line_item)
+
           respond_with(@line_item, status: 201, default_template: :show)
         rescue ActiveRecord::RecordInvalid => error
           invalid_resource!(error.record)
@@ -27,7 +28,6 @@ module Spree
       def update
         @line_item = find_line_item
         if @order.contents.update_cart(line_items_attributes)
-          set_metadata(@line_item)
           @line_item.reload
           respond_with(@line_item, default_template: :show)
         else
@@ -42,14 +42,6 @@ module Spree
       end
 
       private
-
-      def set_metadata(line_item)
-       line_item.update(customer_metadata: line_item_params[:customer_metadata])
-
-       if can?(:admin, Spree::LineItem)
-         line_item.update(admin_metadata: line_item_params[:admin_metadata])
-       end
-      end
 
       def load_order
         @order ||= Spree::Order.includes(:line_items).find_by!(number: order_id)
@@ -66,8 +58,19 @@ module Spree
         { line_items_attributes: {
             id: params[:id],
             quantity: params[:line_item][:quantity],
-            options: line_item_params[:options] || {}
+            options: line_item_params[:options] || {},
+            **extract_metadata
         } }
+      end
+
+      def extract_metadata
+        metadata = { customer_metadata: line_item_params[:customer_metadata] }
+
+        if @current_user_roles&.include?("admin")
+          metadata[:admin_metadata] = line_item_params[:admin_metadata]
+        end
+
+        metadata
       end
 
       def line_item_params

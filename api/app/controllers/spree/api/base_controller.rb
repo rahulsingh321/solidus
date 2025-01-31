@@ -12,8 +12,7 @@ module Spree
         :ReturnAuthorization,
         :Shipment,
         :StockLocation,
-        :StockMovement,
-        :Variant
+        :StockMovement
       ]
 
       self.responder = Spree::Api::Responders::AppResponder

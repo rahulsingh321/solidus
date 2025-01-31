@@ -45,7 +45,8 @@ module Spree
         shipment: Spree::Shipment,
         stock_location: Spree::StockLocation,
         stock_movement: Spree::StockMovement,
-        user: Spree::LegacyUser
+        user: Spree::LegacyUser,
+        line_item: Spree::LineItem
       }
 
       ATTRIBUTES.each do |attribute|
@@ -79,7 +80,7 @@ module Spree
       def variant_attributes
         preference_attributes = Spree::Api::Config.variant_attributes
         if @current_user_roles&.include?("admin")
-          preference_attributes + [:cost_price] + [:admin_metadata]
+          preference_attributes + [:cost_price]
         else
           preference_attributes
         end

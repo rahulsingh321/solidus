@@ -14,7 +14,7 @@ module Spree
 
     preference :variant_attributes, :array, default: [
       :id, :name, :sku, :weight, :height, :width, :depth, :is_master,
-      :slug, :description, :track_inventory, :customer_metadata
+      :slug, :description, :track_inventory
     ]
 
     preference :image_attributes, :array, default: [
