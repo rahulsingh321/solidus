@@ -16,6 +16,8 @@ module Spree
   # option values and may have inventory units. Sum of on_hand each variant's
   # inventory level determine "on_hand" level for the product.
   class Variant < Spree::Base
+    extend FriendlyId
+    friendly_id :slug_candidates, use: :history
     acts_as_list scope: :product
 
     include Spree::SoftDeletable
@@ -32,7 +34,7 @@ module Spree
     belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
     belongs_to :shipping_category, class_name: "Spree::ShippingCategory", optional: true
 
-    delegate :name, :description, :slug, :available_on, :discontinue_on, :discontinued?,
+    delegate :name, :description, :available_on, :discontinue_on, :discontinued?,
              :meta_description, :meta_keywords,
              to: :product
     delegate :tax_category, :tax_category_id, to: :product, prefix: true
@@ -64,6 +66,7 @@ module Spree
     before_validation :set_cost_currency
     before_validation :set_price, if: -> { product && product.master }
     before_validation :build_vat_prices, if: -> { rebuild_vat_prices? || new_record? && product }
+    before_validation :normalize_slug, on: :update
 
     validates :product, presence: true
     validate :check_price
@@ -71,12 +74,15 @@ module Spree
     validates :cost_price, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
     validates :price,      numericality: { greater_than_or_equal_to: 0, allow_nil: true }
     validates_uniqueness_of :sku, allow_blank: true, case_sensitive: true, conditions: -> { where(deleted_at: nil) }, if: :enforce_unique_sku?
+    validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: true }
 
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
 
     after_save :clear_in_stock_cache
     after_touch :clear_in_stock_cache
+    after_destroy :punch_slug
+    after_discard :punch_slug
 
     after_destroy :destroy_option_values_variants
 
@@ -84,6 +90,20 @@ module Spree
       left_joins(product: { option_types: :option_values }).where(is_master: true).where.not(spree_option_values: { id: nil }).reorder(nil).distinct
     end
     scope :non_template_variants, -> { where.not(id: template_variants) }
+
+    # Forces the polymorphic_url to use ID instead of slug
+    def to_param
+      id.to_s
+    end
+
+    def punch_slug
+      # punch slug with date prefix to allow reuse of original
+      update_column :slug, "#{Time.current.to_i}_#{slug}" unless frozen?
+    end
+
+    def normalize_slug
+      self.slug = normalize_friendly_id(slug)
+    end
 
     # Returns variants that are in stock. When stock locations are provided as
     # a parameter, the scope is limited to variants that are in stock in the
@@ -382,6 +402,14 @@ module Spree
     end
 
     private
+
+    # Try building a slug based on the following fields in increasing order of specificity.
+    def slug_candidates
+      [
+        :options_text,
+        [:options_text, :sku]
+      ]
+    end
 
     def rebuild_vat_prices?
       @rebuild_vat_prices != "0" && @rebuild_vat_prices

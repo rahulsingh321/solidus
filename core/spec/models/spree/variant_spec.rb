@@ -1083,4 +1083,40 @@ RSpec.describe Spree::Variant, type: :model do
     expect { variant.option_values << variant.option_values.first }
       .to raise_error ActiveRecord::RecordNotUnique
   end
+
+  context "slugs" do
+    it "normalizes slug on update validation" do
+      variant.slug = "hey//joe"
+      variant.valid?
+      expect(variant.slug).not_to match "/"
+    end
+
+    it "renames slug on destroy" do
+      old_slug = variant.slug
+      variant.discard
+      expect(old_slug).to_not eq variant.slug
+    end
+
+    it "validates slug uniqueness" do
+      existing_variant = variant
+      new_variant = create(:variant)
+      new_variant.slug = existing_variant.slug
+
+      expect(new_variant.valid?).to eq false
+    end
+
+    # it "falls back to 'name-sku' for slug if regular name-based slug already in use" do
+    #   variant1 = build(:variant)
+    #   variant1.name = "test"
+    #   variant1.sku = "123"
+    #   variant1.save!
+
+    #   variant2 = build(:variant)
+    #   variant2.name = "test"
+    #   variant2.sku = "456"
+    #   variant2.save!
+
+    #   expect(variant2.slug).to eq 'test-456'
+    # end
+  end
 end

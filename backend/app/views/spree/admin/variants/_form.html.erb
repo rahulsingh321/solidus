@@ -15,6 +15,12 @@
           </label>
         </div>
       </div>
+      <div class="col-3">
+        <div class="field" data-hook="admin_variant_form_slug">
+          <%= f.label :slug %>
+          <%= f.text_field :slug, class: 'fullwidth title', value: @variant.slug %>
+        </div>
+      </div>
     </div>
   </fieldset>
   <fieldset class="no-border-bottom">

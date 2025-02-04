@@ -30,11 +30,17 @@
 
       <div class="mt-4">
         <div data-hook="admin_product_form_taxons">
+          <%= f.field_container :breadcrumb_source do %>
+            <%= f.label :breadcrumb_source_id %><br>
+            <%= f.hidden_field :breadcrumb_source_id, value: @product.breadcrumb_source_id %>
+          <% end %>
+        </div>
+        <div data-hook="admin_product_form_taxons">
           <%= f.field_container :taxons do %>
             <%= f.label :taxon_ids, plural_resource_name(Spree::Taxon) %><br>
             <%= f.hidden_field :taxon_ids, value: @product.taxon_ids.join(',') %>
           <% end %>
-        </div>
+        </div
 
         <div data-hook="admin_product_form_option_types">
           <%= f.field_container :option_types do %>
