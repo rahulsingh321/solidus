@@ -83,3 +83,16 @@
     <% end %>
   </div>
 </div>
+<hr>
+<%= f.field_container :favicon do %>
+  <%= f.label :favicon %>
+  <%= f.file_field :favicon, class: 'fullwidth', accept: 'image/png,image/x-icon,image/vnd.microsoft.icon' %>
+  <%= f.error_message_on :favicon %>
+  <% if @store.favicon.attached? %>
+    <div class="mt-2">
+      <strong>Current Favicon:</strong>
+      <br>
+      <%= image_tag @store.favicon.attachment.url ,width: 100, height: 100, class: "img-thumbnail"%>
+    </div>
+  <% end %>
+<% end %>

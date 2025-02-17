@@ -27,6 +27,7 @@ module Spree
     before_save :ensure_default_exists_and_is_unique
     before_destroy :validate_not_default
 
+    has_one_attached :favicon
     def available_locales
       locales = super()
       if locales
