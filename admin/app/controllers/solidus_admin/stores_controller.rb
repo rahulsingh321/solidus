@@ -17,6 +17,18 @@ module SolidusAdmin
       end
     end
 
+    def edit
+      redirect_to action: :show
+    end
+
+    def show
+      @store = Spree::Store.find_by(id: params[:id])
+
+      respond_to do |format|
+        format.html { render component('stores/show').new(store: @store) }
+      end
+    end
+
     def destroy
       @stores = Spree::Store.where(id: params[:id])
 

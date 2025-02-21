@@ -1,0 +1,10 @@
+en:
+  title: "%{store}"
+  save: Save
+  store_details: Store Details
+  store_contact: Store Contact
+  localization: Store Localization
+  description: Description
+  addresses: Addresses
+  update: Update
+  cancel: Cancel
