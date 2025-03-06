@@ -1,85 +1,101 @@
-<%= page do %>
-  <%= page_header do %>
-    <%= page_header_back(solidus_admin.stores_path) %>
-    <%= page_header_title(t(".title", store: @store&.name)) %>
-    <%= page_header_actions do %>
-      <div class="py-1.5 text-center">
-        <%= render component("ui/button").new(tag: :button, text: t(".update"), form: form_id) %>
-        <%= render component("ui/button").new(tag: :a, text: t(".cancel"), href: solidus_admin.edit_store_path(@store), scheme: :secondary) %>
-      </div>
+<%= turbo_frame_tag :resource_modal, target: "_top" do %>
+  <%= page do %>
+    <%= page_header do %>
+      <%= page_header_back(solidus_admin.stores_path) %>
+      <%= page_header_title(t(".title", store: @store&.name)) %>
+      <%= page_header_actions do %>
+        <div class="py-1.5 text-center">
+          <%= render component("ui/button").new(tag: :button, text: t(".update"), form: form_id) %>
+          <%= render component("ui/button").new(tag: :a, text: t(".cancel"), href: solidus_admin.edit_store_path(@store), scheme: :secondary) %>
+        </div>
+      <% end %>
     <% end %>
-  <% end %>
 
-  <%= form_for @store, url: solidus_admin.store_path(@store), html: { id: form_id } do |f| %>
-    <%= page_with_sidebar do %>
-      <%= page_with_sidebar_main do %>
-        <%= render component("ui/panel").new(title: t(".store_settings")) do %>
-          <div class="flex flex-wrap gap-4 pb-4">
-            <%= render component("ui/forms/field").text_field(f, :name, required: true) %>
-            <%= render component("ui/forms/field").text_field(f, :url, required: true) %>
-            <%= render component("ui/forms/field").text_field(f, :code, required: true, hint: t(".hint.code").html_safe) %>
-          </div>
-        <% end %>
+    <%= form_for @store, url: solidus_admin.store_path(@store), html: { id: form_id } do |f| %>
+      <%= page_with_sidebar do %>
+        <%= page_with_sidebar_main do %>
+          <%= render component("ui/panel").new(title: t(".store_settings")) do %>
+            <div class="flex flex-wrap gap-4 pb-4">
+              <%= render component("ui/forms/field").text_field(f, :name, required: true) %>
+              <%= render component("ui/forms/field").text_field(f, :url, required: true) %>
+              <%= render component("ui/forms/field").text_field(f, :code, hint: t(".hint.code").html_safe) %>
+              <div class="favicon-field space-y-2">
+                <%= f.label :favicon, class: "text-gray-700 font-semibold text-xs" %>
+                <%= f.file_field :favicon, class: "w-full font-normal text-sm", accept: "image/png,image/x-icon,image/vnd.microsoft.icon" %>
 
-        <%= render component("ui/panel").new(title: t(".regional_settings")) do %>
-          <div class="flex flex-wrap gap-4 pb-4">
-            <%= render component("ui/forms/field").select(
-              f,
-              :default_currency,
-              currency_options,
-              include_blank: true,
-              hint: t(".hint.default_currency").html_safe
-            ) %>
-            <%= render component("ui/forms/field").select(
-              f,
-              :cart_tax_country_iso,
-              cart_tax_country_options,
-              include_blank: t(".no_cart_tax_country"),
-              hint: t(".hint.cart_tax_country_iso").html_safe
-            ) %>
-            <%= render component("ui/forms/field").select(
-              f,
-              :available_locales,
-              localization_options,
-              multiple: true,
-              class: "select2",
-              name: "store[available_locales][]",
-              hint: t(".hint.available_locales").html_safe
-            ) %>
-          </div>
-        <% end %>
+                <% if @store.errors[:favicon].present? %>
+                  <span class="text-red-600 text-xs"><%= @store.errors[:favicon].join("<br>").html_safe %></span>
+                <% end %>
+                <% if @store.reload.favicon.persisted? %>
+                  <div class="text-gray-700 font-semibold text-xs space-y-1">
+                    <span>Current Favicon:</span>
+                    <%= image_tag @store.favicon.attachment.url, width: 80, height: 80, class: "border border-gray-300 rounded-lg p-1 shadow-sm" %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
 
-        <%= render component("ui/panel").new(title: t(".email_settings")) do %>
-          <div class="flex flex-wrap gap-4 pb-4">
-            <%= render component("ui/forms/field").text_field(f, :mail_from_address, required: true) %>
-            <%= render component("ui/forms/field").text_field(f, :bcc_email) %>
-          </div>
-        <% end %>
-
-        <%= render component("ui/panel").new(title: t(".store_legal_addres")) do %>
-          <div class="flex flex-wrap gap-4 pb-4">
-            <div class="js-addresses-form">
-              <%= render component("stores/address_form").new(
-                store: @store,
+          <%= render component("ui/panel").new(title: t(".regional_settings")) do %>
+            <div class="flex flex-wrap gap-4 pb-4">
+              <%= render component("ui/forms/field").select(
+                f,
+                :default_currency,
+                currency_options,
+                include_blank: true,
+                hint: t(".hint.default_currency").html_safe
+              ) %>
+              <%= render component("ui/forms/field").select(
+                f,
+                :cart_tax_country_iso,
+                cart_tax_country_options,
+                include_blank: t(".no_cart_tax_country"),
+                hint: t(".hint.cart_tax_country_iso").html_safe
+              ) %>
+              <%= render component("ui/forms/field").select(
+                f,
+                :available_locales,
+                localization_options,
+                multiple: true,
+                class: "select2",
+                name: "store[available_locales][]",
+                hint: t(".hint.available_locales").html_safe
               ) %>
             </div>
-          </div>
-        <% end %>
+          <% end %>
 
-        <%= render component("ui/panel").new(title: t(".contact_options")) do %>
-          <div class="flex flex-wrap gap-4 pb-4">
-            <%= render component("ui/forms/field").text_field(f, :contact_phone) %>
-            <%= render component("ui/forms/field").text_field(f, :contact_email) %>
-          </div>
-        <% end %>
+          <%= render component("ui/panel").new(title: t(".email_settings")) do %>
+            <div class="flex flex-wrap gap-4 pb-4">
+              <%= render component("ui/forms/field").text_field(f, :mail_from_address, required: true) %>
+              <%= render component("ui/forms/field").text_field(f, :bcc_email) %>
+            </div>
+          <% end %>
 
-        <%= render component("ui/panel").new(title: t(".content_on_storefront")) do %>
-          <div class="flex flex-wrap gap-4 pb-4">
-            <%= render component("ui/forms/field").text_field(f, :seo_title) %>
-            <%= render component("ui/forms/field").text_area(f, :description) %>
-            <%= render component("ui/forms/field").text_field(f, :meta_keywords) %>
-            <%= render component("ui/forms/field").text_area(f, :meta_description) %>
-          </div>
+          <%= render component("ui/panel").new(title: t(".store_legal_addres")) do %>
+            <div class="flex flex-wrap gap-4 pb-4">
+              <div class="js-addresses-form">
+                <%= render component("stores/address_form").new(
+                  store: @store,
+                ) %>
+              </div>
+            </div>
+          <% end %>
+
+          <%= render component("ui/panel").new(title: t(".contact_options")) do %>
+            <div class="flex flex-wrap gap-4 pb-4">
+              <%= render component("ui/forms/field").text_field(f, :contact_phone) %>
+              <%= render component("ui/forms/field").text_field(f, :contact_email) %>
+            </div>
+          <% end %>
+
+          <%= render component("ui/panel").new(title: t(".content_on_storefront")) do %>
+            <div class="flex flex-wrap gap-4 pb-4">
+              <%= render component("ui/forms/field").text_field(f, :seo_title) %>
+              <%= render component("ui/forms/field").text_area(f, :description) %>
+              <%= render component("ui/forms/field").text_field(f, :meta_keywords) %>
+              <%= render component("ui/forms/field").text_area(f, :meta_description) %>
+            </div>
+          <% end %>
         <% end %>
       <% end %>
     <% end %>

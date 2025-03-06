@@ -4,12 +4,12 @@ require "spec_helper"
 
 RSpec.describe SolidusAdmin::Stores::New::Component, type: :component do
   let(:store) { Spree::Store.new }
-  let(:component) { described_class.new(store: store) }
+  let(:component) { described_class.new(store) }
 
   describe "#render" do
     it "renders the new store form" do
       store = Spree::Store.new
-      render_inline described_class.new(store: store)
+      render_inline described_class.new(store)
 
       expect(rendered_content).to have_selector("form")
       expect(rendered_content).to have_field("store[name]")

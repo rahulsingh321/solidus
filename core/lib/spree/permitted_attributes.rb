@@ -126,7 +126,7 @@ module Spree
                           :mail_from_address, :cart_tax_country_iso,
                           :bcc_email, :contact_email, :contact_phone, :code,
                           :tax_id, :vat_id, :description, :address1, :address2,
-                          :city, :zipcode, :country_id, :state_id, :state_name]
+                          :city, :zipcode, :country_id, :state_id, :state_name, :favicon]
 
     @@taxonomy_attributes = [:name]
 

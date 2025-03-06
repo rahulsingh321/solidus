@@ -7,7 +7,7 @@ class SolidusAdmin::Stores::Edit::Component < SolidusAdmin::BaseComponent
   attr_reader :store, :available_countries
 
   # Initialize the component with required data
-  def initialize(store:)
+  def initialize(store)
     @store = store
     @available_countries = fetch_available_countries
   end

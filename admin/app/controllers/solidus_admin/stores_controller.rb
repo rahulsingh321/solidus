@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module SolidusAdmin
-  class StoresController < SolidusAdmin::BaseController
+  class StoresController < SolidusAdmin::ResourcesController
     include SolidusAdmin::ControllerHelpers::Search
 
     def index
@@ -22,9 +22,7 @@ module SolidusAdmin
 
       respond_to do |format|
         format.html {
-          render component("stores/new").new(
-            store: @store
-          )
+          render component("stores/new").new(@store)
         }
       end
     end
@@ -33,7 +31,7 @@ module SolidusAdmin
       @store = Spree::Store.find_by(id: params[:id])
 
       respond_to do |format|
-        format.html { render component('stores/edit').new(store: @store) }
+        format.html { render component('stores/edit').new(@store) }
       end
     end
 
@@ -48,8 +46,13 @@ module SolidusAdmin
 
     private
 
-    def store_params
-      params.require(:store).permit(:store_id, permitted_store_attributes)
+    def resource_class
+      Spree::Store
+    end
+
+    def permitted_resource_params
+      permitted_keys = Spree::Store.column_names.without("id", "created_at", "updated_at")
+      params.require(:store).permit(*permitted_keys, :favicon)
     end
   end
 end
